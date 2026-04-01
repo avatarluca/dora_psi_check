@@ -1,52 +1,4 @@
 """
-Then we directly do the following for each pub:
-We go to mods: https://admin.dora.lib4ri.ch/psi/islandora/object/psi:[ID like 64533]/datastream/MODS/view
-In there we see entries like 
-
-<name type="personal">
-<namePart type="family">Pautz</namePart>
-<namePart type="given">A.</namePart>
-<role>
-<roleTerm authority="marcrelator" type="text">author</roleTerm>
-</role>
-<alternativeName altType="formal_name">
-<namePart>Andreas Pautz</namePart>
-<nameIdentifier type="authorId">psi-authors:1336</nameIdentifier>
-</alternativeName>
-<nameIdentifier type="organizational unit id">psi-units:90</nameIdentifier>
-<affiliation type="group">4000 Nuclear Engineering and Sciences</affiliation>
-<affiliation type="section"/>
-<affiliation type="department"/>
-<affiliation type="division">Nuclear Engineering and Sciences NES</affiliation>
-</name> 
-where we see that he is psi author but sometimes also other authors like 
-<name type="personal">
-<namePart type="family">Clarke</namePart>
-<namePart type="given">S.D.</namePart>
-<role>
-<roleTerm authority="marcrelator" type="text">author</roleTerm>
-</role>
-<alternativeName altType="formal_name">
-<namePart/>
-<nameIdentifier type="authorId"/>
-</alternativeName>
-<nameIdentifier type="organizational unit id"/>
-<affiliation type="group"/>
-<affiliation type="section"/>
-<affiliation type="department"/>
-<affiliation type="division"/>
-</name>
-which we can ignor (we just intrest us for psi authors)
-we also have publication year with <originInfo>
-<dateIssued encoding="w3cdtf" keyDate="yes">2025</dateIssued>
-</originInfo> 
-
-Then we have this dataclasses which we created (with authors)
-
-
-Now we have to develop the follwoing algorithm:
-In the end we want wrong publications with the following defined criteria
-
 - If there is not a date issued field we mark this publication with "no date and not comparable
 - If there is we do the following:
    For each of the defined psi authors in the mods we get group, section, department, division, organizational unit id
@@ -57,8 +9,6 @@ In the end we want wrong publications with the following defined criteria
    If the group name (especially the id of the group which is in the mods the first number in the group thingy, is not equal to the excel group in this year (excel has priority)) Then do the following:
    Mark it as wrong but with the right group id (like sugesstion like "shouldnt it be....?") And if the group is right but the laboratory items and division and other thingys not the also 
    Even if already pub is set to wrong of a prev author of this pub still do this for every author of this pub who is psi
-
-   Put it together in a nice way maybe nice json file or something
 """
 
 import requests
