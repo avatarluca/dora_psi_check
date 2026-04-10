@@ -66,6 +66,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Dict, Iterable, List, Optional, Tuple
+import sys
 
 import requests
 from bs4 import BeautifulSoup
@@ -190,19 +191,19 @@ def parse_mods_xml(text: str, pub_id: str) -> Optional[ModsPublication]:
 
     authors: list[ModsAuthor] = []
     name_tags = root.findall(f'.//{ns}name')
-    print(f"[PARSE-DEBUG] {pub_id}: found {len(name_tags)} <name> elements")
+    # print(f"[PARSE-DEBUG] {pub_id}: found {len(name_tags)} <name> elements")
     for name_tag in name_tags:
         if name_tag.get("type") != "personal":
             continue
 
         alt_id_tag = name_tag.find(f'.//{ns}nameIdentifier[@type="authorId"]')
         if alt_id_tag is None:
-            print(f"[PARSE-DEBUG] {pub_id}: personal name without psi-authors id")
+            # print(f"[PARSE-DEBUG] {pub_id}: personal name without psi-authors id")
             continue
 
         alt_id = norm(alt_id_tag.text)
         if not alt_id.startswith("psi-authors:"):
-            print(f"[PARSE-DEBUG] {pub_id}: skipped nameIdentifier {alt_id}")
+            #  print(f"[PARSE-DEBUG] {pub_id}: skipped nameIdentifier {alt_id}")
             continue
 
         psi_author_id = alt_id.split(":", 1)[1].strip()
@@ -301,27 +302,30 @@ def get_effective_excel_entry(author_obj: Any, pub_year: int) -> Tuple[Optional[
 
 def parse_mods(pub_id: str) -> Optional[ModsPublication]:
     url = f"https://admin.dora.lib4ri.ch/psi/islandora/object/psi:{pub_id}/datastream/MODS/view"
-    print(f"[FETCH] MODS {pub_id}")
+    #print(f"[FETCH] MODS {pub_id}")
 
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
     except requests.RequestException as exc:
         logger.error("Cannot fetch MODS for publication %s: %s", pub_id, exc)
-        print(f"[ERROR] Failed to fetch MODS for {pub_id}: {exc}")
+        # print(f"[ERROR] Failed to fetch MODS for {pub_id}: {exc}")
         return None
 
     try:
         pub = parse_mods_xml(response.text, pub_id)
+              
+        """
         print(f"[PARSER] {pub_id}: parsed with ET XML parser")
         print(f"[PARSE] Publication {pub_id} parsed, year={pub.year}, authors={len(pub.authors)}")
         for mod_author in pub.authors:
             print(
                 f"  [MODS] {pub_id} author={mod_author.psi_author_id} M={mods_affiliation_tuple(mod_author)}"
-            )
+            )"""
         return pub
     except Exception as exc:
-        print(f"[WARN] XML parser unavailable for {pub_id}, falling back to BeautifulSoup: {exc}")
+        #print(f"[WARN] XML parser unavailable for {pub_id}, falling back to BeautifulSoup: {exc}")
+        pass
 
     soup = make_soup(response.text, pub_id)
     date_tag = soup.find("dateIssued", {"keyDate": "yes"})
@@ -365,11 +369,13 @@ def parse_mods(pub_id: str) -> Optional[ModsPublication]:
     pub = ModsPublication(pub_id=pub_id, year=year, authors=authors)
     if not hasattr(pub, "wrong_flags"):
         pub.wrong_flags = []
+    
+    """
     print(f"[PARSE] Publication {pub_id} parsed, year={year}, authors={len(authors)}")
     for mod_author in authors:
         print(
             f"  [MODS] {pub_id} author={mod_author.psi_author_id} M={mods_affiliation_tuple(mod_author)}"
-        )
+        )"""
     return pub
 
 def check_publication(pub: ModsPublication, authors_dict: dict, reference_year: Optional[int] = None) -> ModsPublication:
@@ -379,7 +385,7 @@ def check_publication(pub: ModsPublication, authors_dict: dict, reference_year: 
     pub.checked = True
     pub.status = "correct"
 
-    print(f"[CHECK] Publication {pub.pub_id} year={pub.year}")
+    # print(f"[CHECK] Publication {pub.pub_id} year={pub.year}")
     if pub.year is None:
         for mod_author in pub.authors:
             if any(norm(v) for v in [mod_author.group, mod_author.section, mod_author.department, mod_author.division, mod_author.org_unit_id]):
@@ -393,7 +399,7 @@ def check_publication(pub: ModsPublication, authors_dict: dict, reference_year: 
     if should_use_0000_only(pub.year, reference_year):
         for mod_author in pub.authors:
             mods_tuple = mods_affiliation_tuple(mod_author)
-            print(f"  [MODS] {mod_author.psi_author_id} M={mods_tuple}")
+            # print(f"  [MODS] {mod_author.psi_author_id} M={mods_tuple}")
             if mods_tuple != empty_0000_tuple():
                 pub.wrong_flags.append(
                     f"Author {mod_author.psi_author_id}: publication year {pub.year} is in the 0000 PSI-only branch, "
@@ -404,19 +410,19 @@ def check_publication(pub: ModsPublication, authors_dict: dict, reference_year: 
 
     for mod_author in pub.authors:
         actual = mods_affiliation_tuple(mod_author)
-        print(f"  [MODS] {mod_author.psi_author_id} M={actual}")
+        # print(f"  [MODS] {mod_author.psi_author_id} M={actual}")
         excel_entry, source = get_author_excel_entry(authors_dict, mod_author, pub.year)
         if source == "missing_author":
-            print(f"  [EXCEL] {mod_author.psi_author_id}: not found in Excel")
+            # print(f"  [EXCEL] {mod_author.psi_author_id}: not found in Excel")
             pub.wrong_flags.append(f"PSI author {mod_author.psi_author_id} not found in Excel dataclass")
             continue
 
         if excel_entry is None:
             expected = empty_0000_tuple()
-            print(f"  [EXCEL] {mod_author.psi_author_id} D=0000 PSI synthetic (no Excel entry)")
+            # print(f"  [EXCEL] {mod_author.psi_author_id} D=0000 PSI synthetic (no Excel entry)")
         else:
             expected = excel_affiliation_tuple(excel_entry)
-            print(f"  [EXCEL] {mod_author.psi_author_id} D={expected} source={source}")
+            #print(f"  [EXCEL] {mod_author.psi_author_id} D={expected} source={source}")
 
         if norm(mod_author.group) and not norm(mod_author.org_unit_id):
             pub.wrong_flags.append(
@@ -430,7 +436,8 @@ def check_publication(pub: ModsPublication, authors_dict: dict, reference_year: 
                 f"(source={source}, MODS={actual}, Excel={expected})"
             )
         else:
-            print(f"  [MATCH] {mod_author.psi_author_id} correct")
+            # print(f"  [MATCH] {mod_author.psi_author_id} correct")
+            pass
 
     pub.status = "wrong" if pub.wrong_flags else "correct"
     return pub
@@ -528,33 +535,74 @@ def run_publication_check(authors_dict: dict, publication_ids: Optional[Iterable
     publication_ids = list(dict.fromkeys(publication_ids))
     results: List[PublicationResult] = []
 
-    print(f"[RUN] Checking {len(publication_ids)} publications with {max_workers} workers")
+    total = len(publication_ids)
+    processed = 0
+
+    correct_count = 0
+    wrong_count = 0
+    error_count = 0
+
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {executor.submit(parse_mods, pub_id): pub_id for pub_id in publication_ids}
+
         for future in as_completed(futures):
             pub_id = futures[future]
+            processed += 1
+
             try:
                 pub = future.result()
+
                 if pub is None:
-                    print(f"[RESULT] {pub_id}: error - failed to fetch MODS")
-                    results.append(build_publication_result(None, pub_id, f"Failed to fetch MODS for publication {pub_id}"))
-                    continue
-                checked_pub = check_publication(pub, authors_dict)
-                results.append(build_publication_result(checked_pub, pub_id))
-                print(f"[RESULT] {pub_id}: {checked_pub.status} ({len(checked_pub.wrong_flags)} issues)")
-                if checked_pub.status != "correct":
-                    for issue in checked_pub.wrong_flags:
-                        print(f"  - {issue}")
-                logger.info("Checked publication %s: %s", pub_id, checked_pub.status)
+                    error_count += 1
+                    results.append(
+                        build_publication_result(None, pub_id, f"Failed to fetch MODS for publication {pub_id}")
+                    )
+                else:
+                    checked_pub = check_publication(pub, authors_dict)
+                    results.append(build_publication_result(checked_pub, pub_id))
+
+                    if checked_pub.status == "correct":
+                        correct_count += 1
+                    else:
+                        wrong_count += 1
+
             except Exception as exc:
-                print(f"[RESULT] {pub_id}: error - {exc}")
-                logger.error("Error checking publication %s: %s", pub_id, exc)
+                error_count += 1
                 results.append(build_publication_result(None, pub_id, str(exc)))
+
+            if processed % 10 == 0 or processed == total: # for clean only every 10 publications or at the end
+                print_progress_bar(processed, total, correct_count, wrong_count, error_count)
+
+    print_progress_bar(processed, total, correct_count, wrong_count, error_count)
+    print()
 
     report_path = save_publication_report(results, DATA_OUTPUT_DIR)
     print(f"[SAVE] Report saved to {report_path}")
+
+    print("\n[SUMMARY]")
+    print(f"Total:   {total}")
+    print(f"Correct: {correct_count}")
+    print(f"Wrong:   {wrong_count}")
+    print(f"Errors:  {error_count}")
+    
     return results
 
+# from https://github.com/avatarluca/ANTLR-Benchmarking-Framework/blob/main/print.py
+def print_progress_bar(iteration, total, correct=0, wrong=0, errors=0, length=40):
+    if total <= 0:
+        sys.stdout.write("\r|----------------------------------------| 0.00% Complete")
+        sys.stdout.flush()
+        return
+
+    percent = (iteration / total) * 100
+    filled_length = int(length * iteration // total)
+    bar = '█' * filled_length + '-' * (length - filled_length)
+
+    sys.stdout.write(
+        f'\r|{bar}| {percent:6.2f}% '
+        f'CORRECT: {correct}  WRONG: {wrong}  ERRORS: {errors}'
+    )
+    sys.stdout.flush()
 
 def save_wrong_publications(wrong_pubs: list, data_output_dir: str, file_name: str = "wrong_pubs.json") -> str:
     os.makedirs(data_output_dir, exist_ok=True)
