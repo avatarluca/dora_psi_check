@@ -71,6 +71,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
+from difflib import SequenceMatcher
 
 from config import AS_FILE_NAME, DATA_OUTPUT_DIR, PS_FILE_NAME, PS_MAX_WORKERS
 from psi_publication_scraper import fetch_author_publications, load_author_ids
@@ -83,10 +84,23 @@ def strip_accents(value: Any) -> str:
     normalized = unicodedata.normalize("NFKD", text)
     return "".join(ch for ch in normalized if not unicodedata.combining(ch))
 
+def similarity(a: str, b: str) -> float: # we use fuzzy match as fallback see https://stackoverflow.com/questions/74727698/how-to-use-difflib-independently-from-position
+    return SequenceMatcher(None, a, b).ratio()
+def german_transliterate(text: str) -> str: # from chatgpt
+    replacements = {
+        "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss",
+        "Ä": "ae", "Ö": "oe", "Ü": "ue",
+    } 
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+    return text
 
 def normalize_display_name(value: Any) -> str:
-    return re.sub(r"\s+", " ", strip_accents(str(value or "")).strip()).lower()
-
+    text = str(value or "")
+    text = german_transliterate(text)
+    text = strip_accents(text)
+    text = re.sub(r"\s+", " ", text.strip())
+    return text.lower()
 
 def get_initials(value: Any) -> str:
     text = strip_accents(str(value or "")).strip()
@@ -254,7 +268,40 @@ def find_excel_author_author_key(authors_dict: dict, mod_author: ModsAuthor, pub
         if excel_initials and given_initials and excel_initials[0] == given_initials[0]:
             candidates.append(key)
 
-    if not candidates:
+    if not candidates: # fuzzy fallback (took this from https://github.com/avatarluca/ANTLR-Benchmarking-Framework)
+        target_family = normalize_display_name(mod_author.family)
+        target_initials = get_initials(mod_author.given)
+
+        best_candidate = None
+        best_score = 0.0
+
+        for key, author in authors_dict.items():
+            candidate_family = normalize_display_name(author.lastname)
+            if not candidate_family or not target_family:
+                continue
+
+            if len(candidate_family) < 3 or len(target_family) < 3: # for more strict: use 4
+                continue
+
+            if candidate_family[0] != target_family[0]:
+                continue
+
+            if candidate_family[:3] != target_family[:3]:
+                continue
+
+            candidate_initials = get_initials(author.firstname_initial)
+
+            score = similarity(target_family, candidate_family)
+
+            if score > best_score and (
+                not target_initials or not candidate_initials or target_initials[0] == candidate_initials[0]
+            ):
+                best_score = score
+                best_candidate = key
+
+        if best_candidate is not None and best_score >= 0.90: # TODO: maybe change this to 0.8 if to strict? i personally guess that its enough like this
+            return best_candidate
+
         return None
     if len(candidates) == 1 or pub_year is None:
         return candidates[0]
