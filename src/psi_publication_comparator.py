@@ -73,7 +73,7 @@ from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
 from difflib import SequenceMatcher
 
-from config import AS_FILE_NAME, DATA_OUTPUT_DIR, PS_FILE_NAME, PS_MAX_WORKERS
+from config import AS_FILE_NAME, DATA_OUTPUT_DIR, PS_FILE_NAME, PS_MAX_WORKERS, PC_FUZZY_MATCHING_ENABLED
 from psi_publication_scraper import fetch_author_publications, load_author_ids
 from models.mods import ModsPublication, ModsAuthor
 
@@ -269,38 +269,39 @@ def find_excel_author_author_key(authors_dict: dict, mod_author: ModsAuthor, pub
             candidates.append(key)
 
     if not candidates: # fuzzy fallback (took this from https://github.com/avatarluca/ANTLR-Benchmarking-Framework)
-        target_family = normalize_display_name(mod_author.family)
-        target_initials = get_initials(mod_author.given)
+        if PC_FUZZY_MATCHING_ENABLED:
+            target_family = normalize_display_name(mod_author.family)
+            target_initials = get_initials(mod_author.given)
 
-        best_candidate = None
-        best_score = 0.0
+            best_candidate = None
+            best_score = 0.0
 
-        for key, author in authors_dict.items():
-            candidate_family = normalize_display_name(author.lastname)
-            if not candidate_family or not target_family:
-                continue
+            for key, author in authors_dict.items():
+                candidate_family = normalize_display_name(author.lastname)
+                if not candidate_family or not target_family:
+                    continue
 
-            if len(candidate_family) < 3 or len(target_family) < 3: # for more strict: use 4
-                continue
+                if len(candidate_family) < 3 or len(target_family) < 3: # for more strict: use 4
+                    continue
 
-            if candidate_family[0] != target_family[0]:
-                continue
+                if candidate_family[0] != target_family[0]:
+                    continue
 
-            if candidate_family[:3] != target_family[:3]:
-                continue
+                if candidate_family[:3] != target_family[:3]:
+                    continue
 
-            candidate_initials = get_initials(author.firstname_initial)
+                candidate_initials = get_initials(author.firstname_initial)
 
-            score = similarity(target_family, candidate_family)
+                score = similarity(target_family, candidate_family)
 
-            if score > best_score and (
-                not target_initials or not candidate_initials or target_initials[0] == candidate_initials[0]
-            ):
-                best_score = score
-                best_candidate = key
+                if score > best_score and (
+                    not target_initials or not candidate_initials or target_initials[0] == candidate_initials[0]
+                ):
+                    best_score = score
+                    best_candidate = key
 
-        if best_candidate is not None and best_score >= 0.90: # TODO: maybe change this to 0.8 if to strict? i personally guess that its enough like this
-            return best_candidate
+            if best_candidate is not None and best_score >= 0.90: # TODO: maybe change this to 0.8 if to strict? i personally guess that its enough like this
+                return best_candidate
 
         return None
     if len(candidates) == 1 or pub_year is None:

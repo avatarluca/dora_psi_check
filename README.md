@@ -12,3 +12,7 @@ To run the tests, use `python -m unittest discover -s tests` from the root of th
 
 ## Comparison Logic
 Please see the comment of the pseudo code and used rules in [psi_publication_comparator.py](src/psi_publication_comparator.py) for more details on the comparison logic and the rules that are applied when comparing the affiliation information between the MODS data and the Excel data.
+
+## TODO
+- Add more tests 
+- Add generation of wrong affiliations report dynamically while comparing the data instead of waiting until the end to generate the report
