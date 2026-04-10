@@ -1,55 +1,75 @@
 [
   {
-    "pub_id": "64111",
-    "year": 2010,
+    "pub_id": "25004",
+    "year": 2013,
     "status": "wrong",
     "checked": true,
     "issues": [
-      "Author 3967: group information in MODS does not match Excel (source=better_previous, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
-      "Author 2745: group information in MODS does not match Excel (source=better_previous, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
-      "Author 4893: group information in MODS does not match Excel (source=exact, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
-      "Author 5367: group information in MODS does not match Excel (source=synthetic_0000_after_only, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('0000 PSI', '', '', '', ''))"
+      "PSI author 2483 not found in Excel dataclass",
+      "Author 1746: group information in MODS does not match Excel (source=synthetic_0000_after_only, MODS=('3002 Condensed Matter Theory', '', '', 'Neutron and Muon Sciences CNM', 'psi-units:374'), Excel=('0000 PSI', '', '', '', ''))",
+      "PSI author 6053 not found in Excel dataclass",
+      "Author 2599: group information in MODS does not match Excel (source=exact, MODS=('2000 Life Sciences', '', '', 'Life Sciences CLS', 'psi-units:36'), Excel=('2000 Biology and Chemistry', '', '', 'Life Sciences CLS', ''))"
     ],
     "authors": [
       {
-        "psi_author_id": "3967",
-        "family": "Emmenegger",
-        "given": "M.",
-        "group": "8420 Power Electronics",
-        "section": "Power Electronics",
-        "department": "Accelerator Technology ABT",
-        "division": "Accelerator Science and Engineering CAS",
-        "org_unit_id": "psi-units:261"
+        "psi_author_id": "2483",
+        "family": "Brueckner",
+        "given": "Florian",
+        "group": "2311 Structural Biology of Membrane Proteins",
+        "section": "",
+        "department": "Biomolecular Research LBF",
+        "division": "Life Sciences CLS",
+        "org_unit_id": "psi-units:576"
       },
       {
-        "psi_author_id": "2745",
-        "family": "Jäckle",
-        "given": "H.",
-        "group": "8420 Power Electronics",
-        "section": "Power Electronics",
-        "department": "Accelerator Technology ABT",
-        "division": "Accelerator Science and Engineering CAS",
-        "org_unit_id": "psi-units:261"
+        "psi_author_id": "1746",
+        "family": "Piscitelli",
+        "given": "Chayne L.",
+        "group": "3002 Condensed Matter Theory",
+        "section": "",
+        "department": "",
+        "division": "Neutron and Muon Sciences CNM",
+        "org_unit_id": "psi-units:374"
       },
       {
-        "psi_author_id": "4893",
-        "family": "Künzi",
-        "given": "R.",
-        "group": "8420 Power Electronics",
-        "section": "Power Electronics",
-        "department": "Accelerator Technology ABT",
-        "division": "Accelerator Science and Engineering CAS",
-        "org_unit_id": "psi-units:261"
+        "psi_author_id": "1752",
+        "family": "Tsai",
+        "given": "Ching-Ju",
+        "group": "1620 Photonics",
+        "section": "Photonics",
+        "department": "Grossprojekte PSI",
+        "division": "Paul Scherrer Institute PSI",
+        "org_unit_id": "psi-units:368"
       },
       {
-        "psi_author_id": "5367",
-        "family": "Richner",
-        "given": "S.",
-        "group": "8420 Power Electronics",
-        "section": "Power Electronics",
-        "department": "Accelerator Technology ABT",
-        "division": "Accelerator Science and Engineering CAS",
-        "org_unit_id": "psi-units:261"
+        "psi_author_id": "3202",
+        "family": "Standfuss",
+        "given": "Jörg",
+        "group": "2011 Structural Biology of Membrane Proteins",
+        "section": "",
+        "department": "",
+        "division": "Life Sciences CLS",
+        "org_unit_id": "psi-units:37"
+      },
+      {
+        "psi_author_id": "6053",
+        "family": "Deupi",
+        "given": "Xavier",
+        "group": "3002 Condensed Matter Theory",
+        "section": "",
+        "department": "",
+        "division": "Neutron and Muon Sciences CNM",
+        "org_unit_id": "psi-units:374"
+      },
+      {
+        "psi_author_id": "2599",
+        "family": "Schertler",
+        "given": "Gebhard F.X.",
+        "group": "2000 Life Sciences",
+        "section": "",
+        "department": "",
+        "division": "Life Sciences CLS",
+        "org_unit_id": "psi-units:36"
       }
     ]
   }
