@@ -1,0 +1,56 @@
+[
+  {
+    "pub_id": "64111",
+    "year": 2010,
+    "status": "wrong",
+    "checked": true,
+    "issues": [
+      "Author 3967: group information in MODS does not match Excel (source=better_previous, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
+      "Author 2745: group information in MODS does not match Excel (source=better_previous, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
+      "Author 4893: group information in MODS does not match Excel (source=exact, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('9320 Power Electronics', 'Power Electronics', 'Infrastructure and Electrical Installations AIE', 'Corporate Services CCS', ''))",
+      "Author 5367: group information in MODS does not match Excel (source=synthetic_0000_after_only, MODS=('8420 Power Electronics', 'Power Electronics', 'Accelerator Technology ABT', 'Accelerator Science and Engineering CAS', 'psi-units:261'), Excel=('0000 PSI', '', '', '', ''))"
+    ],
+    "authors": [
+      {
+        "psi_author_id": "3967",
+        "family": "Emmenegger",
+        "given": "M.",
+        "group": "8420 Power Electronics",
+        "section": "Power Electronics",
+        "department": "Accelerator Technology ABT",
+        "division": "Accelerator Science and Engineering CAS",
+        "org_unit_id": "psi-units:261"
+      },
+      {
+        "psi_author_id": "2745",
+        "family": "Jäckle",
+        "given": "H.",
+        "group": "8420 Power Electronics",
+        "section": "Power Electronics",
+        "department": "Accelerator Technology ABT",
+        "division": "Accelerator Science and Engineering CAS",
+        "org_unit_id": "psi-units:261"
+      },
+      {
+        "psi_author_id": "4893",
+        "family": "Künzi",
+        "given": "R.",
+        "group": "8420 Power Electronics",
+        "section": "Power Electronics",
+        "department": "Accelerator Technology ABT",
+        "division": "Accelerator Science and Engineering CAS",
+        "org_unit_id": "psi-units:261"
+      },
+      {
+        "psi_author_id": "5367",
+        "family": "Richner",
+        "given": "S.",
+        "group": "8420 Power Electronics",
+        "section": "Power Electronics",
+        "department": "Accelerator Technology ABT",
+        "division": "Accelerator Science and Engineering CAS",
+        "org_unit_id": "psi-units:261"
+      }
+    ]
+  }
+]

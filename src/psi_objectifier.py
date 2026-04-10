@@ -17,7 +17,7 @@ def load_authors():
     input_path = os.path.join(DATA_INPUT_DIR, OB_INPUT_FILE)
     with open(input_path, newline='', encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter=';')
-        reader.fieldnames = [h.strip() for h in reader.fieldnames]
+        reader.fieldnames = [h.strip().lstrip('\ufeff') for h in reader.fieldnames]
 
         for row in reader:
             row = {k.strip(): (v.strip() if v else "") for k, v in row.items()}

@@ -18,3 +18,5 @@ class ModsPublication:
     year: Optional[int] = None
     authors: List[ModsAuthor] = field(default_factory=list)
     wrong_flags: List[str] = field(default_factory=list)
+    status: str = "unchecked"
+    checked: bool = False
