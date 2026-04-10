@@ -262,12 +262,16 @@ def find_excel_author_author_key(authors_dict: dict, mod_author: ModsAuthor, pub
     ranked_candidates: List[Tuple[int, str]] = []
     for candidate in candidates:
         _, source = get_effective_excel_entry(authors_dict[candidate], pub_year)
+
+        # scoring (aka priority) based on the source of the affiliation information: 
+        # we have exact match > previous entry > synthetic 0000 after only > synthetic 0000 no entry
         score = {
             "exact": 4,
             "previous": 3,
             "synthetic_0000_after_only": 2,
-            "synthetic_0000_no_entry": 1,
+            "synthetic_0000_no_entry": 1, # TODO: make this 0 in the future when we are more confident that the synthetic 0000 entries are correct
         }.get(source, 0)
+
         ranked_candidates.append((score, candidate))
 
     ranked_candidates.sort(key=lambda item: item[0], reverse=True)
